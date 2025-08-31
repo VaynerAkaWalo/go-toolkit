@@ -62,5 +62,5 @@ func (handler HttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *statusCatcher) WriteHeader(statusCode int) {
 	s.statusCode = statusCode
-	s.WriteHeader(statusCode)
+	s.ResponseWriter.WriteHeader(statusCode)
 }
