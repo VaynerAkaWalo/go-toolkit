@@ -1,25 +1,20 @@
-package logger
+package xlog
 
 import (
 	"context"
+	"github.com/VaynerAkaWalo/go-toolkit/xctx"
 	"log/slog"
 	"os"
 	"slices"
 )
 
-type ContextKey string
-
-const (
-	Transaction ContextKey = "tx_id"
-)
-
 type handler struct {
 	slog.Handler
-	keys []ContextKey
+	keys []xctx.ContextKey
 }
 
-func NewPreConfiguredHandler(keys ...ContextKey) slog.Handler {
-	combinedKeys := append(keys, Transaction)
+func NewPreConfiguredHandler(keys ...xctx.ContextKey) slog.Handler {
+	combinedKeys := append(keys, xctx.Transaction)
 
 	slices.Sort(combinedKeys)
 	combinedKeys = slices.Compact(combinedKeys)
@@ -27,7 +22,7 @@ func NewPreConfiguredHandler(keys ...ContextKey) slog.Handler {
 	return NewCustomHandler(combinedKeys...)
 }
 
-func NewCustomHandler(keys ...ContextKey) slog.Handler {
+func NewCustomHandler(keys ...xctx.ContextKey) slog.Handler {
 	return &handler{
 		Handler: slog.NewJSONHandler(os.Stdout, nil),
 		keys:    keys,
