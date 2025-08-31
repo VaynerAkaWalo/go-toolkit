@@ -3,6 +3,7 @@ package xlog
 import (
 	"context"
 	"github.com/VaynerAkaWalo/go-toolkit/xctx"
+	"github.com/VaynerAkaWalo/go-toolkit/xhttp"
 	"log/slog"
 	"os"
 	"slices"
@@ -14,7 +15,7 @@ type handler struct {
 }
 
 func NewPreConfiguredHandler(keys ...xctx.ContextKey) slog.Handler {
-	combinedKeys := append(keys, xctx.Transaction)
+	combinedKeys := append(keys, xctx.Transaction, xhttp.Error, xhttp.Method, xhttp.Path, xhttp.Duration, xhttp.StatusCode)
 
 	slices.Sort(combinedKeys)
 	combinedKeys = slices.Compact(combinedKeys)

@@ -14,6 +14,8 @@ const (
 	StatusCode xctx.ContextKey = "status_code"
 	Duration   xctx.ContextKey = "duration"
 	Error      xctx.ContextKey = "error"
+	Method     xctx.ContextKey = "method"
+	Path       xctx.ContextKey = "path"
 )
 
 type errorResponse struct {
@@ -31,6 +33,8 @@ type HttpHandler func(http.ResponseWriter, *http.Request) error
 func (handler HttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	ctx := context.WithValue(r.Context(), xctx.Transaction, uuid.New().String())
+	ctx = context.WithValue(ctx, Method, r.Method)
+	ctx = context.WithValue(ctx, Path, r.URL.Path)
 
 	var code int
 	catcher := &statusCatcher{ResponseWriter: w}
