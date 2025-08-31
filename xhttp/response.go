@@ -7,6 +7,8 @@ import (
 
 func WriteResponse(w http.ResponseWriter, code int, response interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.WriteHeader(code)
 
 	err := json.NewEncoder(w).Encode(response)
