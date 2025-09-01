@@ -18,19 +18,21 @@ const (
 	Path       xctx.ContextKey = "path"
 )
 
-type errorResponse struct {
-	Message string `json:"message"`
-	Code    int    `json:"code"`
-}
+type (
+	handler func(http.ResponseWriter, *http.Request) error
 
-type statusCatcher struct {
-	http.ResponseWriter
-	statusCode int
-}
+	errorResponse struct {
+		Message string `json:"message"`
+		Code    int    `json:"code"`
+	}
 
-type HttpHandler func(http.ResponseWriter, *http.Request) error
+	statusCatcher struct {
+		http.ResponseWriter
+		statusCode int
+	}
+)
 
-func (handler HttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	ctx := context.WithValue(r.Context(), xctx.Transaction, uuid.New().String())
 	ctx = context.WithValue(ctx, Method, r.Method)
@@ -39,7 +41,7 @@ func (handler HttpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var code int
 	catcher := &statusCatcher{ResponseWriter: w}
 
-	err := handler(catcher, r.WithContext(ctx))
+	err := h(catcher, r.WithContext(ctx))
 	if err != nil {
 		var httpError *HttpError
 		if errors.As(err, &httpError) {

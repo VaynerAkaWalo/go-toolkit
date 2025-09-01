@@ -5,27 +5,38 @@ import (
 	"net/http"
 )
 
-type Server struct {
-	Addr     string
-	Handlers []RouteHandler
-}
+type (
+	Server struct {
+		Addr     string
+		Handlers []RouteHandler
+	}
 
-type RouteHandler interface {
-	RegisterRoutes(router *http.ServeMux)
-}
+	Router struct {
+		*http.ServeMux
+	}
+
+	RouteHandler interface {
+		RegisterRoutes(router *Router)
+	}
+)
 
 func (server *Server) ListenAndServe() error {
-	router := http.NewServeMux()
+	mux := http.NewServeMux()
 
 	httpServer := &http.Server{
 		Addr:    server.Addr,
-		Handler: router,
+		Handler: mux,
 	}
 
-	for _, handler := range server.Handlers {
-		handler.RegisterRoutes(router)
+	apiRouter := Router{mux}
+	for _, routeHandler := range server.Handlers {
+		routeHandler.RegisterRoutes(&apiRouter)
 	}
 
 	slog.Info("Starting http server at port " + server.Addr)
 	return httpServer.ListenAndServe()
+}
+
+func (router *Router) RegisterHandler(route string, routeHandler func(http.ResponseWriter, *http.Request) error) {
+	router.Handle(route, handler(routeHandler))
 }
