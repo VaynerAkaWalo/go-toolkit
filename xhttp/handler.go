@@ -76,8 +76,6 @@ func (h httpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if catcher.statusCode != 0 {
 		code = catcher.statusCode
 	}
-
-	h.logRequestCompletion(ctx, code, start)
 }
 
 func (h httpHandler) logRequestCompletion(ctx context.Context, code int, start time.Time) {
