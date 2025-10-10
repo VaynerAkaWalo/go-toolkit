@@ -9,10 +9,12 @@ type (
 	Server struct {
 		Addr     string
 		Handlers []RouteHandler
+		AuthN    Authenticator
 	}
 
 	Router struct {
 		*http.ServeMux
+		AuthN Authenticator
 	}
 
 	RouteHandler interface {
@@ -28,7 +30,7 @@ func (server *Server) ListenAndServe() error {
 		Handler: mux,
 	}
 
-	apiRouter := Router{mux}
+	apiRouter := Router{mux, server.AuthN}
 	for _, routeHandler := range server.Handlers {
 		routeHandler.RegisterRoutes(&apiRouter)
 	}
@@ -38,5 +40,5 @@ func (server *Server) ListenAndServe() error {
 }
 
 func (router *Router) RegisterHandler(route string, routeHandler func(http.ResponseWriter, *http.Request) error) {
-	router.Handle(route, handler(routeHandler))
+	router.Handle(route, httpHandler{routeHandler, router.AuthN})
 }
