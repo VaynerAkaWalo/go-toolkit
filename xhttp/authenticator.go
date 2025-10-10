@@ -51,7 +51,7 @@ func NewAuthenticator(provider AuthenticationProvider, excludePaths ...string) A
 }
 
 func (authN Authenticator) authenticate(ctx context.Context, r *http.Request) (context.Context, error) {
-	currentPath := r.Method + r.URL.Path
+	currentPath := r.Method + " " + r.URL.Path
 	isExcluded, _ := authN.excludePaths[currentPath]
 
 	if isExcluded {
