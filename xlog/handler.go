@@ -15,7 +15,7 @@ type handler struct {
 }
 
 func NewPreConfiguredHandler(keys ...xctx.ContextKey) slog.Handler {
-	combinedKeys := append(keys, xctx.Transaction, xhttp.Error, xhttp.Method, xhttp.Path, xhttp.Duration, xhttp.StatusCode)
+	combinedKeys := append(keys, xctx.Transaction, xhttp.Error, xhttp.Method, xhttp.Path, xhttp.Duration, xhttp.StatusCode, xhttp.UserId)
 
 	slices.Sort(combinedKeys)
 	combinedKeys = slices.Compact(combinedKeys)
