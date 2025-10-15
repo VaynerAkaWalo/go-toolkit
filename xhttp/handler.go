@@ -93,3 +93,9 @@ func (s *statusCatcher) WriteHeader(statusCode int) {
 	s.statusCode = statusCode
 	s.ResponseWriter.WriteHeader(statusCode)
 }
+
+func (s *statusCatcher) Flush() {
+	if flusher, ok := s.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
