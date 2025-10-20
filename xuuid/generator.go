@@ -13,3 +13,9 @@ func Base32UUID() string {
 	encoder := base32.StdEncoding.WithPadding(base64.NoPadding)
 	return strings.ToLower(encoder.EncodeToString(uid[:]))
 }
+
+func UUID() string {
+	uid, _ := uuid.NewV7()
+
+	return uid.String()
+}
