@@ -13,6 +13,19 @@ type (
 	}
 )
 
+func NewBroker(types ...reflect.Type) *Broker {
+	channels := make(map[reflect.Type]interface{})
+
+	for _, t := range types {
+		channels[t] = reflect.SliceOf(t)
+	}
+
+	return &Broker{
+		channels: channels,
+		mutex:    &sync.RWMutex{},
+	}
+}
+
 func RegisterListener[T any](broker *Broker, ctx context.Context) chan T {
 	eventType := reflect.TypeOf((*T)(nil)).Elem()
 
