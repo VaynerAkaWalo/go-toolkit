@@ -13,10 +13,11 @@ type (
 	}
 )
 
-func NewBroker(types ...reflect.Type) *Broker {
+func NewBroker(events ...any) *Broker {
 	channels := make(map[reflect.Type]interface{})
 
-	for _, t := range types {
+	for _, event := range events {
+		t := reflect.TypeOf(event)
 		channels[t] = reflect.SliceOf(t)
 	}
 
